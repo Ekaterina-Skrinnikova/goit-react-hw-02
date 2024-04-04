@@ -1,21 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Description from "../Description/Description";
 import Feedback from "../Feedback/Feedback";
 import Options from "../Options/Options";
 import Notification from "../Notification/Notification";
 
 export default function App() {
-  const [typesFeedback, setTypesFeedback] = useState({
-    good: 0,
-    neutral: 0,
-    bad: 0,
+  const [typesFeedback, setTypesFeedback] = useState(() => {
+    const savedFeedbacks = localStorage.getItem("feedbacks");
+    if (savedFeedbacks !== null) {
+      return JSON.parse(savedFeedbacks);
+    }
+    return {
+      good: 0,
+      neutral: 0,
+      bad: 0,
+    };
   });
 
+  useEffect(() => {
+    localStorage.setItem("feedbacks", JSON.stringify(typesFeedback));
+  }, [typesFeedback]);
+
   const updateFeedback = (feedbackType) => {
-    setTypesFeedback((prevTypesFeedback) => ({
+    setTypesFeedback({
       ...typesFeedback,
-      [feedbackType]: prevTypesFeedback[feedbackType] + 1,
-    }));
+      [feedbackType]: typesFeedback[feedbackType] + 1,
+    });
   };
 
   const resetFeedback = () => {
